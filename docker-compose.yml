@@ -1,0 +1,32 @@
+version: '3'
+
+networks:
+  auth:
+    driver: bridge
+  app:
+    driver: bridge
+
+services:
+  auth:
+    build:
+      context: ./auth
+    networks:
+      - auth
+    ports:
+      - 127.0.0.1:8778:80
+  app:
+    build:
+      context: ./app
+    networks:
+      - app
+    ports:
+      - 127.0.0.1:8779:80
+  lb:
+    image: nginx
+    networks:
+      - app
+      - auth
+    volumes:
+      - ./lb/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 127.0.0.1:80:80
